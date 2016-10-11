@@ -43,7 +43,7 @@ function woocommerce_timetable_remove_checkout_button($html) {
 
 add_filter('wc_get_template', 'woocommerce_timetable_remove_proceed_link', NULL, 5);
 function woocommerce_timetable_remove_proceed_link($located, $template_name, $args, $template_path, $default_path) {
-    if (woocommerce_timetable_shop_is_closed() && 'cart/proceed-to-checkout-button.php' == $template_name) {
+    if ('cart/proceed-to-checkout-button.php' == $template_name && woocommerce_timetable_shop_is_closed()) {
         return '';
     }
     return $located;
