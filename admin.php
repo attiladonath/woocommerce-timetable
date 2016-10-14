@@ -39,6 +39,13 @@ function woocommerce_timetable_admin_init() {
     );
 
     add_settings_field(
+        'woocommerce_timetable_closed_message',
+        __('Closed Message'),
+        'woocommerce_timetable_settings_field_closed_message',
+        WOOCOMMERCE_TIMETABLE_ADMIN_PAGE,
+        $section
+    );
+    add_settings_field(
         'woocommerce_timetable_closed',
         __('Closed'),
         'woocommerce_timetable_settings_field_closed',
@@ -58,6 +65,11 @@ function woocommerce_timetable_settings_section_main() {
     // No text.
 }
 
+function woocommerce_timetable_settings_field_closed_message() {
+    $options = get_option(WOOCOMMERCE_TIMETABLE_OPTIONS);
+    include dirname(__FILE__) . '/templates/admin-page-field-closed-message.php';
+}
+
 function woocommerce_timetable_settings_field_closed() {
     $options = get_option(WOOCOMMERCE_TIMETABLE_OPTIONS);
     include dirname(__FILE__) . '/templates/admin-page-field-closed.php';
@@ -69,7 +81,7 @@ function woocommerce_timetable_settings_field_timetable() {
 }
 
 function woocommerce_timetable_settings_validate($options) {
-    require_once dirname(__FILE__) . '/timetable_checker.php';
+    require_once dirname(__FILE__) . '/timetable-checker.php';
     $timetable_checker = new WooCommerceTimetable_TimetableChecker($options['timetable']);
     if (!$timetable_checker->isValid()) {
         add_settings_error(

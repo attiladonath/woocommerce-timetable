@@ -15,13 +15,13 @@ defined('ABSPATH') or die();
 
 include dirname(__FILE__) . '/admin.php';
 
-define('WOOCOMMERCE_TIMETABLE_CLOSED_MESSAGE', __('The shop is closed, you cannot order now.'));
 define('WOOCOMMERCE_TIMETABLE_OPTIONS', 'woocommerce-timetable-options');
+define('WOOCOMMERCE_TIMETABLE_DEFAULT_CLOSED_MESSAGE', __('The shop is closed, you cannot order now.'));
 
 add_action('woocommerce_before_checkout_process', 'woocommerce_timetable_prevent_checkout');
 function woocommerce_timetable_prevent_checkout() {
     if (woocommerce_timetable_shop_is_closed()) {
-        throw new Exception(WOOCOMMERCE_TIMETABLE_CLOSED_MESSAGE);
+        throw new Exception(woocommerce_timetable_closed_message());
     }
 }
 
@@ -29,7 +29,7 @@ add_action('woocommerce_before_cart', 'woocommerce_timetable_show_closed_notice'
 add_action('woocommerce_before_checkout_form', 'woocommerce_timetable_show_closed_notice');
 function woocommerce_timetable_show_closed_notice() {
     if (woocommerce_timetable_shop_is_closed()) {
-        wc_print_notice(WOOCOMMERCE_TIMETABLE_CLOSED_MESSAGE, 'notice');
+        wc_print_notice(woocommerce_timetable_closed_message(), 'notice');
     }
 }
 
@@ -64,7 +64,15 @@ function woocommerce_timetable_shop_is_closed_check() {
         return TRUE;
     }
 
-    require_once dirname(__FILE__) . '/timetable_checker.php';
+    require_once dirname(__FILE__) . '/timetable-checker.php';
     $timetable_checker = new WooCommerceTimetable_TimetableChecker($options['timetable']);
     return !$timetable_checker->isOpenNow();
+}
+
+function woocommerce_timetable_closed_message() {
+  $options = get_option(WOOCOMMERCE_TIMETABLE_OPTIONS);
+  if (isset($options['closed-message'])) {
+    return $options['closed-message'];
+  }
+  return WOOCOMMERCE_TIMETABLE_DEFAULT_CLOSED_MESSAGE;
 }
